@@ -21,7 +21,7 @@ namespace TestRawInput
                     _isMonitoring = value;
                     if ( MonitorActiveLabelReference != null )
                     {
-                        MonitorActiveLabelReference.Text = value ? "Monitoring Messages" : "Stopped Monitoring Messages";
+                        MonitorActiveLabelReference.Text = value ? "Monitoring Messages: Started" : "Monitoring Messages: Stopped";
                     }
                 }
             }

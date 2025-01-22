@@ -133,21 +133,27 @@ namespace TestRawInput
             this.Controls.Add(this.startMonitorMessages);
             this.Controls.Add(this.stopMonitorMessages);
 
+            int labelX = 75;
+
             // Set the labels
             this.rawInputActiveLabel.Text = "";
-            this.rawInputActiveLabel.Location = new Point(100, prevY+30);
+            this.rawInputActiveLabel.Location = new Point(labelX, prevY+30);
+            this.rawInputActiveLabel.AutoSize = true;
             prevY += 30;
 
             this.LLKeyboardHookActiveLabel.Text = "";
-            this.LLKeyboardHookActiveLabel.Location = new Point(100, prevY + labelSpacing);
+            this.LLKeyboardHookActiveLabel.Location = new Point(labelX, prevY + labelSpacing);
+            this.LLKeyboardHookActiveLabel.AutoSize = true;
             prevY += labelSpacing;
 
             this.KeyboardHookActiveLabel.Text = "";
-            this.KeyboardHookActiveLabel.Location = new Point(100, prevY + labelSpacing);
+            this.KeyboardHookActiveLabel.Location = new Point(labelX, prevY + labelSpacing);
+            this.KeyboardHookActiveLabel.AutoSize = true;
             prevY += labelSpacing;
 
             this.MonitorActiveLabel.Text = "";
-            this.MonitorActiveLabel.Location = new Point(100, prevY + labelSpacing);
+            this.MonitorActiveLabel.Location = new Point(labelX, prevY + labelSpacing);
+            this.MonitorActiveLabel.AutoSize = true;
             prevY += labelSpacing;
 
             this.Controls.Add(this.rawInputActiveLabel);

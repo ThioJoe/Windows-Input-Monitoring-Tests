@@ -26,7 +26,7 @@ namespace TestRawInput
                     // Custom logic when the property is set
                     if ( WatcherActiveLabelReference != null )
                     {
-                        WatcherActiveLabelReference.Text = value ? "Watcher Active" : "Watcher Inactive";
+                        WatcherActiveLabelReference.Text = value ? "RawInput Watcher: Started" : "RawInput Watcher: Stopped";
                     }
                 }
             }
