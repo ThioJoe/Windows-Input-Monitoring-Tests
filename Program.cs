@@ -70,13 +70,13 @@ namespace TestRawInput
         private void StartButton_Click(object sender, EventArgs e)
         {
             // Initialize raw input handling
-            KeyStatesHandler.InitializeRawInput(this.Handle, this.watcherActiveLabel);
+            RawInputHandler.InitializeRawInput(this.Handle, this.watcherActiveLabel);
         }
 
         private void StopButton_Click(object sender, EventArgs e)
         {
             // Clean up raw input handling
-            KeyStatesHandler.CleanupInputWatcher();
+            RawInputHandler.CleanupInputWatcher();
         }
     }
 }

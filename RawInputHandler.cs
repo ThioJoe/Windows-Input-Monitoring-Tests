@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace TestRawInput
 {
-    internal static class KeyStatesHandler
+    internal static class RawInputHandler
     {
         private static bool _rawInputWatcherActive = false;
         public static bool RawInputWatcherActive
