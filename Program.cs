@@ -28,8 +28,14 @@ namespace TestRawInput
     {
         private Button startRawInputButton;
         private Button stopRawInputButton;
+
+        private Button startLLKeyboardHookButton;
+        private Button stopLLKeyboardHookButton;
+
         private Button startKeyboardHookButton;
         private Button stopKeyboardHookButton;
+
+
         private Label rawInputActiveLabel;
 
         public RawInputWindow()
@@ -44,8 +50,8 @@ namespace TestRawInput
             this.startRawInputButton = new Button();
             this.stopRawInputButton = new Button();
             this.rawInputActiveLabel = new Label();
-            this.startKeyboardHookButton = new Button();
-            this.stopKeyboardHookButton = new Button();
+            this.startLLKeyboardHookButton = new Button();
+            this.stopLLKeyboardHookButton = new Button();
 
             // Start raw input button properties
             this.startRawInputButton.Text = "Start Raw";
@@ -57,25 +63,39 @@ namespace TestRawInput
             this.stopRawInputButton.Location = new Point(150, 50);
             this.stopRawInputButton.Click += StopButton_Click;
 
-            // Start keyboard hook button properties
+            // Start low level keyboard hook button properties
+            this.startLLKeyboardHookButton.Text = "Start LL Hook";
+            this.startLLKeyboardHookButton.Location = new Point(50, 100);
+            this.startLLKeyboardHookButton.Click += StartLLKeyboardHookButton_Click;
+
+            // Stop low level keyboard hook button properties
+            this.stopLLKeyboardHookButton.Text = "Stop LL Hook";
+            this.stopLLKeyboardHookButton.Location = new Point(150, 100);
+            this.stopLLKeyboardHookButton.Click += StopLLKeyboardHookButton_Click;
+
+            // Start regular keyboard hook button properties
+            this.startKeyboardHookButton = new Button();
             this.startKeyboardHookButton.Text = "Start Hook";
-            this.startKeyboardHookButton.Location = new Point(50, 100);
+            this.startKeyboardHookButton.Location = new Point(50, 150);
             this.startKeyboardHookButton.Click += StartKeyboardHookButton_Click;
 
-            // Stop keyboard hook button properties
+            // Stop regular keyboard hook button properties
+            this.stopKeyboardHookButton = new Button();
             this.stopKeyboardHookButton.Text = "Stop Hook";
-            this.stopKeyboardHookButton.Location = new Point(150, 100);
+            this.stopKeyboardHookButton.Location = new Point(150, 150);
             this.stopKeyboardHookButton.Click += StopKeyboardHookButton_Click;
 
             // Add buttons to the form
             this.Controls.Add(this.startRawInputButton);
             this.Controls.Add(this.stopRawInputButton);
+            this.Controls.Add(this.startLLKeyboardHookButton);
+            this.Controls.Add(this.stopLLKeyboardHookButton);
             this.Controls.Add(this.startKeyboardHookButton);
             this.Controls.Add(this.stopKeyboardHookButton);
 
             // Add a label
             this.rawInputActiveLabel.Text = "";
-            this.rawInputActiveLabel.Location = new Point(75, 125);
+            this.rawInputActiveLabel.Location = new Point(100, 200);
             this.Controls.Add(this.rawInputActiveLabel);
 
             // Form properties
@@ -86,10 +106,22 @@ namespace TestRawInput
         private void StartKeyboardHookButton_Click(object sender, EventArgs e)
         {
             // Initialize keyboard hook handling
-            LowLevelKeyboardHookHandler.InitializeKeyboardHook(this.rawInputActiveLabel);
+            KeyboardHookHandler.InitializeKeyboardHook(this.rawInputActiveLabel);
         }
 
         private void StopKeyboardHookButton_Click(object sender, EventArgs e)
+        {
+            // Clean up keyboard hook handling
+            KeyboardHookHandler.StopHook();
+        }
+
+        private void StartLLKeyboardHookButton_Click(object sender, EventArgs e)
+        {
+            // Initialize keyboard hook handling
+            LowLevelKeyboardHookHandler.InitializeKeyboardHook(this.rawInputActiveLabel);
+        }
+
+        private void StopLLKeyboardHookButton_Click(object sender, EventArgs e)
         {
             // Clean up keyboard hook handling
             LowLevelKeyboardHookHandler.StopHook();
