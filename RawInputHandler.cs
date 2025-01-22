@@ -48,35 +48,35 @@ namespace TestRawInput
 
         public static void InitializeRawInput(IntPtr hwnd, Label? labelToUpdate = null)
         {
-            if ( originalWndProc == IntPtr.Zero )
+            if (originalWndProc == IntPtr.Zero )
             {
                 // First set up the window procedure
                 SubclassWindow(hwnd);
-
-                // Then register for raw input
-                RAWINPUTDEVICE[] rid =
-                [
-                    new() // Assign value to the first (and only) device in the array
-                    {
-                        usUsagePage = (ushort)HIDUsagePage.HID_USAGE_PAGE_GENERIC,
-                        usUsage = (ushort)HIDGenericDesktopUsage.HID_USAGE_GENERIC_KEYBOARD,
-                        dwFlags = RAWINPUTDEVICE._dwFlags.RIDEV_INPUTSINK,
-                        hwndTarget = hwnd
-                    },
-                ]; // Create an array of 1 device
-
-                if ( !RegisterRawInputDevices(rid, 1, (uint)Marshal.SizeOf<RAWINPUTDEVICE>()) )
-                {
-                    Console.WriteLine("Failed to register raw input device.");
-                    throw new Exception("Failed to register raw input device.");
-                }
-
-                if ( labelToUpdate != null )
-                {
-                    WatcherActiveLabelReference = labelToUpdate;
-                }
-                RawInputWatcherActive = true;
             }
+
+            // Then register for raw input
+            RAWINPUTDEVICE[] rid =
+            [
+                new() // Assign value to the first (and only) device in the array
+                {
+                    usUsagePage = (ushort)HIDUsagePage.HID_USAGE_PAGE_GENERIC,
+                    usUsage = (ushort)HIDGenericDesktopUsage.HID_USAGE_GENERIC_KEYBOARD,
+                    dwFlags = RAWINPUTDEVICE._dwFlags.RIDEV_INPUTSINK,
+                    hwndTarget = hwnd
+                },
+            ]; // Create an array of 1 device
+
+            if ( !RegisterRawInputDevices(rid, 1, (uint)Marshal.SizeOf<RAWINPUTDEVICE>()) )
+            {
+                Console.WriteLine("Failed to register raw input device.");
+                throw new Exception("Failed to register raw input device.");
+            }
+
+            if ( labelToUpdate != null )
+            {
+                WatcherActiveLabelReference = labelToUpdate;
+            }
+            RawInputWatcherActive = true;
         }
 
         public static RAWINPUT? GetRawInput(IntPtr lParam)
