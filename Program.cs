@@ -26,9 +26,11 @@ namespace TestRawInput
     // Basic Windows form window with Start and Stop buttons
     public class RawInputWindow : Form
     {
-        private Button startButton;
-        private Button stopButton;
-        private Label watcherActiveLabel;
+        private Button startRawInputButton;
+        private Button stopRawInputButton;
+        private Button startKeyboardHookButton;
+        private Button stopKeyboardHookButton;
+        private Label rawInputActiveLabel;
 
         public RawInputWindow()
         {
@@ -39,38 +41,64 @@ namespace TestRawInput
         private void InitializeComponent()
         {
             // Initialize the buttons
-            this.startButton = new Button();
-            this.stopButton = new Button();
-            this.watcherActiveLabel = new Label();
+            this.startRawInputButton = new Button();
+            this.stopRawInputButton = new Button();
+            this.rawInputActiveLabel = new Label();
+            this.startKeyboardHookButton = new Button();
+            this.stopKeyboardHookButton = new Button();
 
-            // Start button properties
-            this.startButton.Text = "Start";
-            this.startButton.Location = new Point(50, 50);
-            this.startButton.Click += StartButton_Click;
+            // Start raw input button properties
+            this.startRawInputButton.Text = "Start Raw";
+            this.startRawInputButton.Location = new Point(50, 50);
+            this.startRawInputButton.Click += StartButton_Click;
 
-            // Stop button properties
-            this.stopButton.Text = "Stop";
-            this.stopButton.Location = new Point(150, 50);
-            this.stopButton.Click += StopButton_Click;
+            // Stop raw input button properties
+            this.stopRawInputButton.Text = "Stop Raw";
+            this.stopRawInputButton.Location = new Point(150, 50);
+            this.stopRawInputButton.Click += StopButton_Click;
+
+            // Start keyboard hook button properties
+            this.startKeyboardHookButton.Text = "Start Hook";
+            this.startKeyboardHookButton.Location = new Point(50, 100);
+            this.startKeyboardHookButton.Click += StartKeyboardHookButton_Click;
+
+            // Stop keyboard hook button properties
+            this.stopKeyboardHookButton.Text = "Stop Hook";
+            this.stopKeyboardHookButton.Location = new Point(150, 100);
+            this.stopKeyboardHookButton.Click += StopKeyboardHookButton_Click;
 
             // Add buttons to the form
-            this.Controls.Add(this.startButton);
-            this.Controls.Add(this.stopButton);
+            this.Controls.Add(this.startRawInputButton);
+            this.Controls.Add(this.stopRawInputButton);
+            this.Controls.Add(this.startKeyboardHookButton);
+            this.Controls.Add(this.stopKeyboardHookButton);
 
             // Add a label
-            this.watcherActiveLabel.Text = "";
-            this.watcherActiveLabel.Location = new Point(50, 75);
-            this.Controls.Add(this.watcherActiveLabel);
+            this.rawInputActiveLabel.Text = "";
+            this.rawInputActiveLabel.Location = new Point(75, 125);
+            this.Controls.Add(this.rawInputActiveLabel);
 
             // Form properties
             this.Text = "Raw Input Window";
-            this.Size = new Size(300, 150);
+            this.Size = new Size(300, 300);
+        }
+
+        private void StartKeyboardHookButton_Click(object sender, EventArgs e)
+        {
+            // Initialize keyboard hook handling
+            LowLevelKeyboardHookHandler.InitializeKeyboardHook(this.rawInputActiveLabel);
+        }
+
+        private void StopKeyboardHookButton_Click(object sender, EventArgs e)
+        {
+            // Clean up keyboard hook handling
+            LowLevelKeyboardHookHandler.StopHook();
         }
 
         private void StartButton_Click(object sender, EventArgs e)
         {
             // Initialize raw input handling
-            RawInputHandler.InitializeRawInput(this.Handle, this.watcherActiveLabel);
+            RawInputHandler.InitializeRawInput(this.Handle, this.rawInputActiveLabel);
         }
 
         private void StopButton_Click(object sender, EventArgs e)
