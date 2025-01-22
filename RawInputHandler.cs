@@ -191,13 +191,39 @@ namespace TestRawInput
                     // Use lookup in WinEnums WM_MESSAGE to get the name of the message
                     int msgCode = (int)rawInput.keyboard.Message;
                     string? msgName = Enum.GetName(typeof(WM_MESSAGE), msgCode);
-                    Console.WriteLine($"Msg: {msgName} - Key: {rawInput.keyboard.VKey}");
 
-                    // We already specified to only get keyboard input, so no need to check dwType, we can just check the keyboard data
-                    if ( rawInput.keyboard.Flags.HasFlag(_Flags.RI_KEY_BREAK) )
+                    // Set E0, E1, or 00 prefix to make code based on flags
+                    bool isE0 = rawInput.keyboard.Flags.HasFlag(_Flags.RI_KEY_E0);
+                    bool isE1 = rawInput.keyboard.Flags.HasFlag(_Flags.RI_KEY_E1);
+                    string prefix = isE0 ? "E0" : isE1 ? "E1" : "00";
+
+                    string makeCodeHex = prefix + rawInput.keyboard.MakeCode.ToString("X2");
+                    string vKeyHex = rawInput.keyboard.VKey.ToString("X2");
+                    string flags = rawInput.keyboard.Flags.ToString();
+
+                    string keyName = ((Keys)rawInput.keyboard.VKey).ToString();
+                    try
                     {
-                        
+                        keyName = ((Keys)rawInput.keyboard.VKey).ToString();
                     }
+                    catch ( Exception )
+                    {
+                        keyName = "Unknown";
+                    }
+
+                    if (String.IsNullOrEmpty(keyName)) {
+                        keyName = "Unknown";
+                    }
+
+                    string t = "   ";
+
+                    //Console.WriteLine($"Msg: {msgName} - Key: {rawInput.keyboard.VKey}");
+                    Console.WriteLine($"Msg: {msgName} \n{t}Key: \t{keyName} \n{t}ScanCode: \t0x{makeCodeHex} \n{t}VKey: \t0x{vKeyHex} \n{t}Flags: \t{flags}\n");
+
+                    //// We already specified to only get keyboard input, so no need to check dwType, we can just check the keyboard data
+                    //if ( rawInput.keyboard.Flags.HasFlag(_Flags.RI_KEY_BREAK) ) // Key up
+                    //{
+                    //}
                 }
             }
             else
