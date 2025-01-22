@@ -35,26 +35,38 @@ namespace TestRawInput
         private Button startKeyboardHookButton;
         private Button stopKeyboardHookButton;
 
+        private Button startMonitorMessages;
+        private Button stopMonitorMessages;
 
         private Label rawInputActiveLabel;
+
+        private IncomingMessageHandler msgHandler;
 
         public RawInputWindow()
         {
             // Initialize components
             InitializeComponent();
-
-            IncomingMessageHandler msgHandler = new IncomingMessageHandler(this);
-            //msgHandler.StartMessageMonitoring();
+            msgHandler = new IncomingMessageHandler(this, this.rawInputActiveLabel);
         }
 
         private void InitializeComponent()
         {
+            this.rawInputActiveLabel = new Label();
+
             // Initialize the buttons
             this.startRawInputButton = new Button();
             this.stopRawInputButton = new Button();
-            this.rawInputActiveLabel = new Label();
+
             this.startLLKeyboardHookButton = new Button();
             this.stopLLKeyboardHookButton = new Button();
+
+            this.startKeyboardHookButton = new Button();
+            this.stopKeyboardHookButton = new Button();
+
+            this.startMonitorMessages = new Button();
+            this.stopMonitorMessages = new Button();
+
+            // ----------------------------------------
 
             // Start raw input button properties
             this.startRawInputButton.Text = "Start Raw";
@@ -68,25 +80,33 @@ namespace TestRawInput
 
             // Start low level keyboard hook button properties
             this.startLLKeyboardHookButton.Text = "Start LL Hook";
-            this.startLLKeyboardHookButton.Location = new Point(50, 100);
+            this.startLLKeyboardHookButton.Location = new Point(50, 85);
             this.startLLKeyboardHookButton.Click += StartLLKeyboardHookButton_Click;
 
             // Stop low level keyboard hook button properties
             this.stopLLKeyboardHookButton.Text = "Stop LL Hook";
-            this.stopLLKeyboardHookButton.Location = new Point(150, 100);
+            this.stopLLKeyboardHookButton.Location = new Point(150, 85);
             this.stopLLKeyboardHookButton.Click += StopLLKeyboardHookButton_Click;
 
             // Start regular keyboard hook button properties
-            this.startKeyboardHookButton = new Button();
             this.startKeyboardHookButton.Text = "Start Hook";
-            this.startKeyboardHookButton.Location = new Point(50, 150);
+            this.startKeyboardHookButton.Location = new Point(50, 120);
             this.startKeyboardHookButton.Click += StartKeyboardHookButton_Click;
 
             // Stop regular keyboard hook button properties
-            this.stopKeyboardHookButton = new Button();
             this.stopKeyboardHookButton.Text = "Stop Hook";
-            this.stopKeyboardHookButton.Location = new Point(150, 150);
+            this.stopKeyboardHookButton.Location = new Point(150, 120);
             this.stopKeyboardHookButton.Click += StopKeyboardHookButton_Click;
+
+            // Start monitoring messages
+            this.startMonitorMessages.Text = "Start Monitor";
+            this.startMonitorMessages.Location = new Point(50, 155);
+            this.startMonitorMessages.Click += StartMonitorMessages_Click;
+
+            // Stop monitoring messages
+            this.stopMonitorMessages.Text = "Stop Monitor";
+            this.stopMonitorMessages.Location = new Point(150, 155);
+            this.stopMonitorMessages.Click += StopMonitorMessages_Click;
 
             // Add buttons to the form
             this.Controls.Add(this.startRawInputButton);
@@ -95,6 +115,8 @@ namespace TestRawInput
             this.Controls.Add(this.stopLLKeyboardHookButton);
             this.Controls.Add(this.startKeyboardHookButton);
             this.Controls.Add(this.stopKeyboardHookButton);
+            this.Controls.Add(this.startMonitorMessages);
+            this.Controls.Add(this.stopMonitorMessages);
 
             // Add a label
             this.rawInputActiveLabel.Text = "";
@@ -104,6 +126,18 @@ namespace TestRawInput
             // Form properties
             this.Text = "Raw Input Window";
             this.Size = new Size(300, 300);
+        }
+
+        private void StartMonitorMessages_Click(object sender, EventArgs e)
+        {
+            // Start monitoring messages
+            msgHandler.StartMessageMonitoring();
+        }
+
+        private void StopMonitorMessages_Click(object sender, EventArgs e)
+        {
+            // Stop monitoring messages
+            msgHandler.StopMessageMonitoring();
         }
 
         private void StartKeyboardHookButton_Click(object sender, EventArgs e)

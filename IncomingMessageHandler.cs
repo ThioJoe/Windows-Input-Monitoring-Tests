@@ -8,21 +8,41 @@ namespace TestRawInput
     {
         private Form _targetForm;
         private IntPtr _originalWndProc;
-        private bool _isHooked = false;
+        private bool _isMonitoring = false;
+
+        // Getter/Setter for isMonitoring
+        public bool IsMonitoring
+        {
+            get => _isMonitoring;
+            set
+            {
+                if ( _isMonitoring != value )
+                {
+                    _isMonitoring = value;
+                    if ( MonitorActiveLabelReference != null )
+                    {
+                        MonitorActiveLabelReference.Text = value ? "Monitoring Messages" : "Stopped Monitoring Messages";
+                    }
+                }
+            }
+        }
+
+        Label MonitorActiveLabelReference = null;
 
         // Delegate for the new window procedure
         private delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
         private WndProcDelegate _newWndProc;
 
-        public IncomingMessageHandler(Form form)
+        public IncomingMessageHandler(Form form, Label monitorActiveLabelReference)
         {
             _targetForm = form;
             _newWndProc = new WndProcDelegate(HandleWindowMessage);
+            MonitorActiveLabelReference = monitorActiveLabelReference;
         }
 
         public void StartMessageMonitoring()
         {
-            if ( _isHooked ) return;
+            if ( IsMonitoring ) return;
 
             // Store the original window procedure
             _originalWndProc = GetWindowLongPtr(_targetForm.Handle, -4);
@@ -31,17 +51,17 @@ namespace TestRawInput
             IntPtr newWndProcPtr = Marshal.GetFunctionPointerForDelegate(_newWndProc);
             SetWindowLongPtr(_targetForm.Handle, -4, newWndProcPtr);
 
-            _isHooked = true;
+            IsMonitoring = true;
         }
 
         public void StopMessageMonitoring()
         {
-            if ( !_isHooked ) return;
+            if ( !IsMonitoring ) return;
 
             // Restore the original window procedure
             SetWindowLongPtr(_targetForm.Handle, -4, _originalWndProc);
 
-            _isHooked = false;
+            IsMonitoring = false;
         }
 
         private IntPtr HandleWindowMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
