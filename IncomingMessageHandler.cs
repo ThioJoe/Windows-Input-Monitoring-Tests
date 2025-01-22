@@ -2,6 +2,8 @@
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
+#nullable enable
+
 namespace TestRawInput
 {
     internal class IncomingMessageHandler
@@ -9,6 +11,7 @@ namespace TestRawInput
         private Form _targetForm;
         private IntPtr _originalWndProc;
         private bool _isMonitoring = false;
+        Label? MonitorActiveLabelReference;
 
         // Getter/Setter for isMonitoring
         public bool IsMonitoring
@@ -27,13 +30,11 @@ namespace TestRawInput
             }
         }
 
-        Label MonitorActiveLabelReference = null;
-
         // Delegate for the new window procedure
         private delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
         private WndProcDelegate _newWndProc;
 
-        public IncomingMessageHandler(Form form, Label monitorActiveLabelReference)
+        public IncomingMessageHandler(Form form, Label? monitorActiveLabelReference = null)
         {
             _targetForm = form;
             _newWndProc = new WndProcDelegate(HandleWindowMessage);
