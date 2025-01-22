@@ -16,6 +16,8 @@ internal static class KeyboardHookHandler
 
     [DllImport("user32.dll")]
     private static extern IntPtr CallNextHookEx(IntPtr idHook, int code, IntPtr wParam, IntPtr lParam);
+    [DllImport("kernel32.dll")]
+    private static extern uint GetCurrentThreadId();
 
     private delegate IntPtr KeyboardProc(int code, IntPtr wParam, IntPtr lParam);
     private static KeyboardProc _proc;
@@ -46,23 +48,23 @@ internal static class KeyboardHookHandler
     private const int WM_KEYDOWN = 0x0100;
     private const int WM_KEYUP = 0x0101;
 
-    [StructLayout(LayoutKind.Explicit)]
-    private struct KeyInfo
+    public struct KeyInfo
     {
-        [FieldOffset(0)]
-        private readonly int _value;
+        private readonly IntPtr _value;
 
-        public int RepeatCount => _value & 0xFFFF;
-        public int ScanCode => (_value >> 16) & 0xFF;
-        public bool IsExtendedKey => ((_value >> 24) & 0x1) == 1;
-        public bool AltPressed => ((_value >> 29) & 0x1) == 1;
-        public bool PreviousState => ((_value >> 30) & 0x1) == 1;
-        public bool TransitionState => ((_value >> 31) & 0x1) == 1;
-
-        public KeyInfo(int value)
+        public KeyInfo(IntPtr lParam)
         {
-            _value = value;
+            _value = lParam;
         }
+
+        private long ToInt64() => _value.ToInt64();
+
+        public int RepeatCount => (int)(ToInt64() & 0xFFFF);
+        public int ScanCode => (int)((ToInt64() >> 16) & 0xFF);
+        public bool IsExtendedKey => ((ToInt64() >> 24) & 0x1) == 1;
+        public bool AltPressed => ((ToInt64() >> 29) & 0x1) == 1;
+        public bool PreviousState => ((ToInt64() >> 30) & 0x1) == 1;
+        public bool TransitionState => ((ToInt64() >> 31) & 0x1) == 1;
     }
 
     public static void InitializeKeyboardHook(Label? labelToUpdate = null)
@@ -71,7 +73,9 @@ internal static class KeyboardHookHandler
             HookActiveLabelReference = labelToUpdate;
 
         _proc = HookCallback;
-        uint threadId = (uint)System.Threading.Thread.CurrentThread.ManagedThreadId;
+        //uint threadId = 0;
+        uint threadId = GetCurrentThreadId();
+
         _hookID = SetWindowsHookEx(WH_KEYBOARD, _proc, IntPtr.Zero, threadId);
 
         if ( _hookID == IntPtr.Zero )
@@ -93,8 +97,9 @@ internal static class KeyboardHookHandler
         if ( code >= 0 )
         {
             int vkCode = (int)wParam;
-            var keyInfo = new KeyInfo(lParam.ToInt32());
-            Console.WriteLine($"VK: {vkCode}, Scan: {keyInfo.ScanCode}, Alt: {keyInfo.AltPressed}");
+            var keyInfo = new KeyInfo(lParam);
+
+            Console.WriteLine($"VK: {vkCode}, Scan: {keyInfo.ScanCode}");
         }
         return CallNextHookEx(_hookID, code, wParam, lParam);
     }
