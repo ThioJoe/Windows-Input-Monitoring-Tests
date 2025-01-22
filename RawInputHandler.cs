@@ -216,8 +216,6 @@ namespace TestRawInput
                     }
 
                     string t = "   ";
-
-                    //Console.WriteLine($"Msg: {msgName} - Key: {rawInput.keyboard.VKey}");
                     Console.WriteLine($"Msg: {msgName} \n{t}Key: \t{keyName} \n{t}ScanCode: \t0x{makeCodeHex} \n{t}VKey: \t0x{vKeyHex} \n{t}Flags: \t{flags}\n");
 
                     //// We already specified to only get keyboard input, so no need to check dwType, we can just check the keyboard data

@@ -1,4 +1,5 @@
 ﻿using System;
+//using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -51,11 +52,15 @@ internal static class KeyboardHookHandler
     public struct KeyInfo
     {
         private readonly IntPtr _value;
+        private readonly int _vkCode;
 
-        public KeyInfo(IntPtr lParam)
+        public KeyInfo(IntPtr lParam, int vkCode)
         {
             _value = lParam;
+            _vkCode = vkCode;
         }
+
+        public int VirtualKey => _vkCode;
 
         private long ToInt64() => _value.ToInt64();
 
@@ -65,6 +70,30 @@ internal static class KeyboardHookHandler
         public bool AltPressed => ((ToInt64() >> 29) & 0x1) == 1;
         public bool PreviousState => ((ToInt64() >> 30) & 0x1) == 1;
         public bool TransitionState => ((ToInt64() >> 31) & 0x1) == 1;
+
+        public override string ToString()
+        {
+            string keyName = "Unknown";
+            try
+            {
+                keyName = ((Keys)VirtualKey).ToString();
+            }
+            catch { }
+
+            string t = "   ";
+            string scanCodeHex = (IsExtendedKey ? "E0" : "00") + ScanCode.ToString("X2");
+            string vkCodeHex = VirtualKey.ToString("X2");
+
+            return $"Key: {keyName}" +
+                   $"\n{t}ScanCode: \t0x{scanCodeHex}" +
+                   $"\n{t}VKey: \t0x{vkCodeHex}" +
+                   $"\n{t}Repeat: \t{RepeatCount}" +
+                   $"\n{t}Flags: \t" +
+                   $"{(IsExtendedKey ? "Extended " : "")}" +
+                   $"{(AltPressed ? "Alt " : "")}" +
+                   $"{(PreviousState ? "PrevDown " : "")}" +
+                   $"{(TransitionState ? "Released" : "Pressed")}\n";
+        }
     }
 
     public static void InitializeKeyboardHook(Label? labelToUpdate = null)
@@ -87,9 +116,6 @@ internal static class KeyboardHookHandler
         {
             KeyboardHookActive = true;
         }
-
-
-        
     }
 
     private static IntPtr HookCallback(int code, IntPtr wParam, IntPtr lParam)
@@ -97,9 +123,10 @@ internal static class KeyboardHookHandler
         if ( code >= 0 )
         {
             int vkCode = (int)wParam;
-            var keyInfo = new KeyInfo(lParam);
+            var keyInfo = new KeyInfo(lParam, vkCode);
 
-            Console.WriteLine($"VK: {vkCode}, Scan: {keyInfo.ScanCode}");
+            //Console.WriteLine($"VK: {vkCode}, Scan: {keyInfo.ScanCode}");
+            Console.WriteLine(keyInfo.ToString());
         }
         return CallNextHookEx(_hookID, code, wParam, lParam);
     }
