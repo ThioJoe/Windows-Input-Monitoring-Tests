@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IncomingMessageHandler.cs" />
     <Compile Include="KeyboardHookHandler.cs" />
     <Compile Include="LowLevelKeyboardHookHandler.cs" />
     <Compile Include="Program.cs" />

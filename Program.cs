@@ -42,6 +42,9 @@ namespace TestRawInput
         {
             // Initialize components
             InitializeComponent();
+
+            IncomingMessageHandler msgHandler = new IncomingMessageHandler(this);
+            //msgHandler.StartMessageMonitoring();
         }
 
         private void InitializeComponent()
