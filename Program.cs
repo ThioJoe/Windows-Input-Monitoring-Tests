@@ -39,6 +39,9 @@ namespace TestRawInput
         private Button stopMonitorMessages;
 
         private Label rawInputActiveLabel;
+        private Label LLKeyboardHookActiveLabel;
+        private Label KeyboardHookActiveLabel;
+        private Label MonitorActiveLabel;
 
         private IncomingMessageHandler msgHandler;
 
@@ -46,12 +49,16 @@ namespace TestRawInput
         {
             // Initialize components
             InitializeComponent();
-            msgHandler = new IncomingMessageHandler(this, this.rawInputActiveLabel);
+            msgHandler = new IncomingMessageHandler(this, this.MonitorActiveLabel);
         }
 
         private void InitializeComponent()
         {
+            // Labels
             this.rawInputActiveLabel = new Label();
+            this.LLKeyboardHookActiveLabel = new Label();
+            this.KeyboardHookActiveLabel = new Label();
+            this.MonitorActiveLabel = new Label();
 
             // Initialize the buttons
             this.startRawInputButton = new Button();
@@ -68,45 +75,53 @@ namespace TestRawInput
 
             // ----------------------------------------
 
+            int btnYStart = 20;
+            int vSpacing = 35;
+            int labelSpacing = 20;
+
             // Start raw input button properties
             this.startRawInputButton.Text = "Start Raw";
-            this.startRawInputButton.Location = new Point(50, 50);
+            this.startRawInputButton.Location = new Point(50, btnYStart);
             this.startRawInputButton.Click += StartButton_Click;
 
             // Stop raw input button properties
             this.stopRawInputButton.Text = "Stop Raw";
-            this.stopRawInputButton.Location = new Point(150, 50);
+            this.stopRawInputButton.Location = new Point(150, btnYStart);
             this.stopRawInputButton.Click += StopButton_Click;
+            int prevY = btnYStart;
 
             // Start low level keyboard hook button properties
             this.startLLKeyboardHookButton.Text = "Start LL Hook";
-            this.startLLKeyboardHookButton.Location = new Point(50, 85);
+            this.startLLKeyboardHookButton.Location = new Point(50, prevY+vSpacing);
             this.startLLKeyboardHookButton.Click += StartLLKeyboardHookButton_Click;
 
             // Stop low level keyboard hook button properties
             this.stopLLKeyboardHookButton.Text = "Stop LL Hook";
-            this.stopLLKeyboardHookButton.Location = new Point(150, 85);
+            this.stopLLKeyboardHookButton.Location = new Point(150, prevY + vSpacing);
             this.stopLLKeyboardHookButton.Click += StopLLKeyboardHookButton_Click;
+            prevY += vSpacing;
 
             // Start regular keyboard hook button properties
             this.startKeyboardHookButton.Text = "Start Hook";
-            this.startKeyboardHookButton.Location = new Point(50, 120);
+            this.startKeyboardHookButton.Location = new Point(50, prevY + vSpacing);
             this.startKeyboardHookButton.Click += StartKeyboardHookButton_Click;
 
             // Stop regular keyboard hook button properties
             this.stopKeyboardHookButton.Text = "Stop Hook";
-            this.stopKeyboardHookButton.Location = new Point(150, 120);
+            this.stopKeyboardHookButton.Location = new Point(150, prevY + vSpacing);
             this.stopKeyboardHookButton.Click += StopKeyboardHookButton_Click;
+            prevY += vSpacing;
 
             // Start monitoring messages
             this.startMonitorMessages.Text = "Start Monitor";
-            this.startMonitorMessages.Location = new Point(50, 155);
+            this.startMonitorMessages.Location = new Point(50, prevY + vSpacing);
             this.startMonitorMessages.Click += StartMonitorMessages_Click;
 
             // Stop monitoring messages
             this.stopMonitorMessages.Text = "Stop Monitor";
-            this.stopMonitorMessages.Location = new Point(150, 155);
+            this.stopMonitorMessages.Location = new Point(150, prevY + vSpacing);
             this.stopMonitorMessages.Click += StopMonitorMessages_Click;
+            prevY += vSpacing;
 
             // Add buttons to the form
             this.Controls.Add(this.startRawInputButton);
@@ -118,10 +133,27 @@ namespace TestRawInput
             this.Controls.Add(this.startMonitorMessages);
             this.Controls.Add(this.stopMonitorMessages);
 
-            // Add a label
+            // Set the labels
             this.rawInputActiveLabel.Text = "";
-            this.rawInputActiveLabel.Location = new Point(100, 200);
+            this.rawInputActiveLabel.Location = new Point(100, prevY+30);
+            prevY += 30;
+
+            this.LLKeyboardHookActiveLabel.Text = "";
+            this.LLKeyboardHookActiveLabel.Location = new Point(100, prevY + labelSpacing);
+            prevY += labelSpacing;
+
+            this.KeyboardHookActiveLabel.Text = "";
+            this.KeyboardHookActiveLabel.Location = new Point(100, prevY + labelSpacing);
+            prevY += labelSpacing;
+
+            this.MonitorActiveLabel.Text = "";
+            this.MonitorActiveLabel.Location = new Point(100, prevY + labelSpacing);
+            prevY += labelSpacing;
+
             this.Controls.Add(this.rawInputActiveLabel);
+            this.Controls.Add(this.LLKeyboardHookActiveLabel);
+            this.Controls.Add(this.KeyboardHookActiveLabel);
+            this.Controls.Add(this.MonitorActiveLabel);
 
             // Form properties
             this.Text = "Raw Input Window";
@@ -143,7 +175,7 @@ namespace TestRawInput
         private void StartKeyboardHookButton_Click(object sender, EventArgs e)
         {
             // Initialize keyboard hook handling
-            KeyboardHookHandler.InitializeKeyboardHook(this.rawInputActiveLabel);
+            KeyboardHookHandler.InitializeKeyboardHook(this.KeyboardHookActiveLabel);
         }
 
         private void StopKeyboardHookButton_Click(object sender, EventArgs e)
@@ -155,7 +187,7 @@ namespace TestRawInput
         private void StartLLKeyboardHookButton_Click(object sender, EventArgs e)
         {
             // Initialize keyboard hook handling
-            LowLevelKeyboardHookHandler.InitializeKeyboardHook(this.rawInputActiveLabel);
+            LowLevelKeyboardHookHandler.InitializeKeyboardHook(this.LLKeyboardHookActiveLabel);
         }
 
         private void StopLLKeyboardHookButton_Click(object sender, EventArgs e)
