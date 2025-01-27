@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35617.110 d17.13
+VisualStudioVersion = 17.13.35617.110
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRawInput", "TestRawInput.csproj", "{1B92B67F-7D86-45FA-A6C9-75FB3102A20A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestInputMonitoring", "TestInputMonitoring.csproj", "{1B92B67F-7D86-45FA-A6C9-75FB3102A20A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

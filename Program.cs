@@ -9,7 +9,7 @@ using System.Drawing;
 
 #nullable enable
 
-namespace TestRawInput
+namespace TestInputMonitoring
 {
     internal static class Program
     {

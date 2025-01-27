@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 #nullable enable
 
-namespace TestRawInput;
+namespace TestInputMonitoring;
 internal static class KeyboardHookHandler
 {
     // Win32 API imports

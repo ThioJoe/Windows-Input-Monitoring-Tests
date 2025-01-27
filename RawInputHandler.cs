@@ -5,12 +5,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using static TestRawInput.WinEnums.RAWKEYBOARD;
+using static TestInputMonitoring.WinEnums.RAWKEYBOARD;
 using System.Windows.Forms;
 
 #nullable enable
 
-namespace TestRawInput
+namespace TestInputMonitoring
 {
     internal static class RawInputHandler
     {

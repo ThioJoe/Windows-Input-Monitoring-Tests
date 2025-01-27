@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 #nullable enable
 
-namespace TestRawInput
+namespace TestInputMonitoring
 {
     internal class IncomingMessageHandler
     {

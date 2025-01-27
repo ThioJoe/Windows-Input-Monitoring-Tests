@@ -1,4 +1,4 @@
-﻿global using static TestRawInput.WinEnums;
+﻿global using static TestInputMonitoring.WinEnums;
 
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 #nullable enable
 
-namespace TestRawInput
+namespace TestInputMonitoring
 {
     internal static class WinEnums
     {

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 using DWORD = System.UInt32;        // 4 Bytes, aka uint, uint32
 
-namespace TestRawInput;
+namespace TestInputMonitoring;
 internal static class LowLevelKeyboardHookHandler
 {
     // Win32 API imports
