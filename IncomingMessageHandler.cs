@@ -24,7 +24,8 @@ namespace TestRawInput
                     _isMonitoring = value;
                     if ( MonitorActiveLabelReference != null )
                     {
-                        MonitorActiveLabelReference.Text = value ? "Monitoring Messages: Started" : "Monitoring Messages: Stopped";
+                        MonitorActiveLabelReference.Text = value ? LabelStrings.MonitorActive : LabelStrings.MonitorInactive;
+                        MonitorActiveLabelReference.ForeColor = value ? LabelColors.ActiveColor : LabelColors.InactiveColor;
                     }
                 }
             }

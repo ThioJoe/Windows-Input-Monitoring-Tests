@@ -57,7 +57,8 @@ internal static class LowLevelKeyboardHookHandler
                 // Custom logic when the property is set
                 if ( HookActiveLabelReference != null )
                 {
-                    HookActiveLabelReference.Text = value ? "Low-Level Hook: Started" : "Low-Level Hook: Stopped";
+                    HookActiveLabelReference.Text = value ? LabelStrings.LLKeyboardHookActive : LabelStrings.LLKeyboardHookInactive;
+                    HookActiveLabelReference.ForeColor = value ? LabelColors.ActiveColor : LabelColors.InactiveColor;
                 }
             }
         }

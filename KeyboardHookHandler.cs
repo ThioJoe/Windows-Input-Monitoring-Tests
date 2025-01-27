@@ -36,7 +36,8 @@ internal static class KeyboardHookHandler
                 _keyboardHookActive = value;
                 if ( HookActiveLabelReference != null )
                 {
-                    HookActiveLabelReference.Text = value ? "Keyboard Hook: Started" : "Keyboard Hook: Stopped";
+                    HookActiveLabelReference.Text = value ? LabelStrings.KeyboardHookActive : LabelStrings.KeyboardHookInactive;
+                    HookActiveLabelReference.ForeColor = value ? LabelColors.ActiveColor : LabelColors.InactiveColor;
                 }
             }
         }
