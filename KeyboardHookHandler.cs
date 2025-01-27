@@ -50,6 +50,7 @@ internal static class KeyboardHookHandler
     private const int WM_KEYDOWN = 0x0100;
     private const int WM_KEYUP = 0x0101;
 
+    // Custom struct based on table of bits for LPARAM found here: https://learn.microsoft.com/en-us/windows/win32/winmsg/keyboardproc#lparam-in
     public struct KeyInfo
     {
         private readonly IntPtr _value;
@@ -97,6 +98,7 @@ internal static class KeyboardHookHandler
         }
     }
 
+    // Creates the hook. Optionally provide a Windows Forms label that will be updated with the hook status
     public static void InitializeKeyboardHook(Label? labelToUpdate = null)
     {
         if ( labelToUpdate != null )
@@ -129,6 +131,8 @@ internal static class KeyboardHookHandler
             //Console.WriteLine($"VK: {vkCode}, Scan: {keyInfo.ScanCode}");
             Console.WriteLine(keyInfo.ToString());
         }
+        // Need to forward the call back to the Windows API or else it will discard the key press
+        // ...In some cases you might want to do that but in this case we just want to monitor, not change anything
         return CallNextHookEx(_hookID, code, wParam, lParam);
     }
 

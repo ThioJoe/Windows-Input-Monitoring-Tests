@@ -47,9 +47,12 @@ namespace TestInputMonitoring
         public static readonly uint rawInputHeaderSize = (uint)Marshal.SizeOf<RAWINPUTHEADER>();
         public static readonly uint rawInputSize = (uint)Marshal.SizeOf<RAWINPUT>();
 
+        // Need to provide a window handle to register for raw input.
+        // The input doesn't need to go to the window to be detected, but it is still required because the input messages are sent to this window as WM messages.
         public static void InitializeRawInput(IntPtr hwnd, Label? labelToUpdate = null)
         {
-            if (originalWndProc == IntPtr.Zero )
+            // Only get the window procedure once. Otherwise it will be overwritten and we won't be able to call the original window procedure
+            if ( originalWndProc == IntPtr.Zero )
             {
                 // First set up the window procedure
                 SubclassWindow(hwnd);
@@ -80,6 +83,7 @@ namespace TestInputMonitoring
             RawInputWatcherActive = true;
         }
 
+        // Gets the data from the RAWINPUT struct in memory and puts it into a variable we can use
         public static RAWINPUT? GetRawInput(IntPtr lParam)
         {
             uint dwSize = rawInputSize;
@@ -107,12 +111,14 @@ namespace TestInputMonitoring
             }
         }
 
+        // If you want to check the state of a key like Num Lock, Scroll Lock, or Caps Lock, you can use this method
         public static bool FetchKeyState(int vkCode)
         {
             bool state = ((GetKeyState(vkCode) & 1) == 1);
             return state;
         }
 
+        // Cleanup method to unregister the raw input. Involves "registering" with RIDEV_REMOVE flag
         public static void CleanupInputWatcher()
         {
             if ( RawInputWatcherActive )
@@ -219,6 +225,7 @@ namespace TestInputMonitoring
                     string t = "   ";
                     Console.WriteLine($"Msg: {msgName} \n{t}Key: \t{keyName} \n{t}ScanCode: \t0x{makeCodeHex} \n{t}VKey: \t0x{vKeyHex} \n{t}Flags: \t{flags}\n");
 
+                    // Uncomment for example of doing something in response to key up events
                     //// We already specified to only get keyboard input, so no need to check dwType, we can just check the keyboard data
                     //if ( rawInput.keyboard.Flags.HasFlag(_Flags.RI_KEY_BREAK) ) // Key up
                     //{

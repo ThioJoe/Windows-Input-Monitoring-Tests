@@ -67,6 +67,7 @@ internal static class LowLevelKeyboardHookHandler
 
     // -----------------------------------------------------------------------------------------------
 
+    // Initialize the keyboard hook. Optionally provide a Windows Forms Label to update with the hook status.
     public static void InitializeKeyboardHook(Label? labelToUpdate = null)
     {
         // Set up keyboard hook
@@ -91,6 +92,7 @@ internal static class LowLevelKeyboardHookHandler
         }
     }
 
+    // This gets run every time a key is pressed. It is called by the Windows API as a callback in response to a key press.
     private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
         if ( nCode >= 0 )
@@ -109,6 +111,8 @@ internal static class LowLevelKeyboardHookHandler
             // Print the key code and flags
             Console.WriteLine($"Key: {keyName} (0x{vkHex}), Flags: {flags}");
         }
+        // Need to forward the call back to the Windows API or else it will discard the key press. Important because for low level hooks it affects the entire system
+        // ...In some cases you might want to do that but in this case we just want to monitor, not change anything
         return CallNextHookEx(_hookID, nCode, wParam, lParam);
     }
 
@@ -132,10 +136,11 @@ internal static class LowLevelKeyboardHookHandler
         public IntPtr dwExtraInfo;
     }
 
+    // Possible flags returned as part of the KBDLLHOOKSTRUCT "flags" field
     [Flags]
     public enum LowLevelKeyboardHookFlags : uint
     {
-        Extended = 0x01,              // Bit 0: Extended key (e.g. function key or numpad)
+        Extended = 0x01,             // Bit 0: Extended key (e.g. function key or numpad)
         LowerILInjected = 0x02,      // Bit 1: Injected from lower integrity level process
         Injected = 0x10,             // Bit 4: Injected from any process
         AltDown = 0x20,              // Bit 5: ALT key pressed
