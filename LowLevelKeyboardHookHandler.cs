@@ -97,13 +97,16 @@ internal static class LowLevelKeyboardHookHandler
             // Get the data from the struct as an object
             KBDLLHOOKSTRUCT kbd = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
             int vkCode = (int)kbd.vkCode;
+            string vkHex = vkCode.ToString("X");
             int scanCode = (int)kbd.scanCode;
             int time = (int)kbd.time;
             IntPtr dwExtraInfo = kbd.dwExtraInfo;
             LowLevelKeyboardHookFlags flags = kbd.flags;
 
+            string keyName = Enum.GetName(typeof(Keys), vkCode) ?? vkCode.ToString();
+
             // Print the key code and flags
-            Console.WriteLine($"Key: {vkCode}, Flags: {flags}");
+            Console.WriteLine($"Key: {keyName} (0x{vkHex}), Flags: {flags}");
         }
         return CallNextHookEx(_hookID, nCode, wParam, lParam);
     }
