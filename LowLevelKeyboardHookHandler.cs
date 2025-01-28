@@ -102,17 +102,17 @@ internal static class LowLevelKeyboardHookHandler
             int vkCode = (int)kbd.vkCode;
             string vkHex = vkCode.ToString("X");
             int scanCode = (int)kbd.scanCode;
-            int time = (int)kbd.time;
-            IntPtr dwExtraInfo = kbd.dwExtraInfo;
+            string scanHex = scanCode.ToString("X");
             LowLevelKeyboardHookFlags flags = kbd.flags;
 
             string keyName = Enum.GetName(typeof(Keys), vkCode) ?? vkCode.ToString();
 
-            // Print the key code and flags
-            Console.WriteLine($"Key: {keyName} (0x{vkHex}), Flags: {flags}");
+            uint time = kbd.time;
+
+            // Print the VK code, scan code, key name, flags, and time with formatting
+            Console.WriteLine($"VK: 0x{vkHex,-4} | Scan: 0x{scanHex,-4} | Key: {keyName,-15} | Time: {time, -10} | Flags: {flags}");
         }
-        // Need to forward the call back to the Windows API or else it will discard the key press. Important because for low level hooks it affects the entire system
-        // ...In some cases you might want to do that but in this case we just want to monitor, not change anything
+        // Need to forward the call back to the Windows API or else it will discard the key press.
         return CallNextHookEx(_hookID, nCode, wParam, lParam);
     }
 
