@@ -208,7 +208,7 @@ namespace TestInputMonitoring
 
             // Form properties
             this.Text = "Raw Input Window";
-            this.Size = new Size(windowWidth + 16, 300); // Account for window border
+            this.Size = new Size(windowWidth + 16, 360); // Account for window border
         }
 
         private void StartMonitorMessages_Click(object sender, EventArgs e)

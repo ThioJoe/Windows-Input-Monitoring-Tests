@@ -57,6 +57,7 @@ internal static class LowLevelKeyboardHookHandler
 
     // -----------------------------------------------------------------------------------------------
     private static bool isBlocking = false;
+    private static bool noPrintMode = false;
 
     private static bool _keyboardHookActive = false;
     public static bool KeyboardHookActive
@@ -115,36 +116,39 @@ internal static class LowLevelKeyboardHookHandler
             int vkCode = (int)kbd.vkCode;
             string vkHex = vkCode.ToString("X");
             int scanCode = (int)kbd.scanCode;
-            string scanHex = scanCode.ToString("X");
+            string scanHex = scanCode.ToString("X4");
             LowLevelKeyboardHookFlags flags = kbd.flags;
 
             string keyName = Enum.GetName(typeof(Keys), vkCode) ?? vkCode.ToString();
-
             uint time = kbd.time;
 
             // Print the VK code, scan code, key name, flags, and time with formatting
-            Console.WriteLine($"VK: 0x{vkHex,-4} | Scan: 0x{scanHex,-4} | Key: {keyName,-15} | Time: {time,-10} | Flags: {flags}");
+            if ( !noPrintMode )
+                Console.WriteLine($"VK: 0x{vkHex,-4} | Scan: 0x{scanHex,-4} | Key: {keyName,-15} | Time: {time,-10} | Flags: {flags}");
 
             // Raise the custom event to notify other classes that a key was pressed
             KeyPressed?.Invoke(null, new KeyPressedEventArgs(vkCode, scanCode, flags, time));
 
-            // If it's the escape key, disable blocking but still don't forward the key press
-            if ( vkCode == VK_ESCAPE || scanCode == wScanEscape)
+            // If it's the escape key, disable blocking but also prevent it from reaching further
+            if ( vkCode == VK_ESCAPE || scanCode == wScanEscape )
             {
                 DisableBlocking();
-                return IntPtr.Zero;
+                return (IntPtr)1; // block it
             }
         }
 
-        if ( !isBlocking ) {
-            // Need to forward the call back to the Windows API or else it will discard the key press.
-            return CallNextHookEx(_hookID, nCode, wParam, lParam); 
+        // If not blocking, pass the keystroke along
+        if ( !isBlocking )
+        {
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
         else
         {
-            return IntPtr.Zero;
+            // Return nonzero to block the key
+            return (IntPtr)1;
         }
     }
+
 
     public static void EnableBlocking()
     {
@@ -169,6 +173,11 @@ internal static class LowLevelKeyboardHookHandler
         }
         DisableBlocking(notify:false);
         KeyboardHookActive = false;
+    }
+
+    public static void SetNoPrintMode(bool value)
+    {
+        noPrintMode = value;
     }
 
     // Returned as pointer in the lparam of the hook callback
