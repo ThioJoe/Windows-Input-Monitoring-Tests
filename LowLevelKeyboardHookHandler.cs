@@ -45,6 +45,19 @@ internal class LowLevelKeyboardHookHandler
 
     // -----------------------------------------------------------------------------------------------
 
+    // A custom event that can be used to notify other classes when a key is pressed
+    public event EventHandler<KeyPressedEventArgs>? KeyPressed;
+    // Custom events for when blocking is enabled and disabled
+    public event EventHandler? BlockingEnabled;
+    public event EventHandler? BlockingDisabled;
+
+    // Escape key code
+    public const int VK_ESCAPE = 0x1B;
+    public const int wScanEscape = 0x0001;
+
+    // -----------------------------------------------------------------------------------------------
+    private bool isBlocking = false;
+
     private bool _keyboardHookActive = false;
     public bool KeyboardHookActive
     {
@@ -111,9 +124,41 @@ internal class LowLevelKeyboardHookHandler
 
             // Print the VK code, scan code, key name, flags, and time with formatting
             Console.WriteLine($"VK: 0x{vkHex,-4} | Scan: 0x{scanHex,-4} | Key: {keyName,-15} | Time: {time,-10} | Flags: {flags}");
+
+            // Raise the custom event to notify other classes that a key was pressed
+            KeyPressed?.Invoke(this, new KeyPressedEventArgs(vkCode, scanCode, flags, time));
+
+            // If it's the escape key, disable blocking but still don't forward the key press
+            if ( vkCode == VK_ESCAPE || scanCode == wScanEscape)
+            {
+                DisableBlocking();
+                return IntPtr.Zero;
+            }
         }
-        // Need to forward the call back to the Windows API or else it will discard the key press.
-        return CallNextHookEx(_hookID, nCode, wParam, lParam);
+
+        if ( !isBlocking ) {
+            // Need to forward the call back to the Windows API or else it will discard the key press.
+            return CallNextHookEx(_hookID, nCode, wParam, lParam); 
+        }
+        else
+        {
+            return IntPtr.Zero;
+        }
+    }
+
+    public void EnableBlocking()
+    {
+        isBlocking = true;
+        // Raise the event to notify other classes that blocking is enabled
+        BlockingEnabled?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void DisableBlocking(bool notify = true)
+    {
+        isBlocking = false;
+        // Raise the event to notify other classes that blocking is disabled
+        if ( notify )
+            BlockingDisabled?.Invoke(this, EventArgs.Empty);
     }
 
     public void StopHook()
@@ -122,6 +167,7 @@ internal class LowLevelKeyboardHookHandler
         {
             UnhookWindowsHookEx(_hookID);
         }
+        DisableBlocking(notify:false);
         KeyboardHookActive = false;
     }
 
@@ -146,5 +192,23 @@ internal class LowLevelKeyboardHookHandler
         AltDown = 0x20,              // Bit 5: ALT key pressed
         KeyUp = 0x80                 // Bit 7: Key being released (transition state)
                                      // Bits 2-3, 6 are reserved
+    }
+
+}
+
+// -----------------------------------------------------------------------------------------------
+internal class KeyPressedEventArgs : EventArgs
+{
+    public int VirtualKeyCode { get; }
+    public int ScanCode { get; }
+    public LowLevelKeyboardHookHandler.LowLevelKeyboardHookFlags Flags { get; }
+    public uint Time { get; }
+
+    public KeyPressedEventArgs(int virtualKeyCode, int scanCode, LowLevelKeyboardHookHandler.LowLevelKeyboardHookFlags flags, uint time)
+    {
+        VirtualKeyCode = virtualKeyCode;
+        ScanCode = scanCode;
+        Flags = flags;
+        Time = time;
     }
 }

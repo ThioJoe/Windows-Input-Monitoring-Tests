@@ -185,6 +185,29 @@ namespace TestInputMonitoring
             this.Controls.Add(this.KeyboardHookActiveLabel);
             this.Controls.Add(this.MonitorActiveLabel);
 
+            // Add a button to open the DetectKeys form
+            Button detectKeysButton = new Button();
+            detectKeysButton.Text = "Detect Keys";
+            detectKeysButton.Location = new Point(leftButtonX, prevY + vSpacing);
+            detectKeysButton.Click += (sender, e) =>
+            {
+                // Check if there's already a DetectKeysForm open
+                foreach ( Form form in Application.OpenForms )
+                {
+                    if ( form is DetectKeysForm )
+                    {
+                        form.BringToFront();
+                        return;
+                    }
+                }
+
+                DetectKeysForm detectKeysForm = new DetectKeysForm();
+                detectKeysForm.Show();
+            };
+            detectKeysButton.Width = buttonWidth;
+            this.Controls.Add(detectKeysButton);
+
+
             // Form properties
             this.Text = "Raw Input Window";
             this.Size = new Size(windowWidth + 16, 300); // Account for window border

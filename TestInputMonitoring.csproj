@@ -67,6 +67,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DetectKeys.cs" />
+    <Compile Include="DetectKeysForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DetectKeysForm.Designer.cs">
+      <DependentUpon>DetectKeysForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="IncomingMessageHandler.cs" />
     <Compile Include="KeyboardHookHandler.cs" />
     <Compile Include="LowLevelKeyboardHookHandler.cs" />
@@ -77,6 +83,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DetectKeysForm.resx">
+      <DependentUpon>DetectKeysForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
