@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using DWORD = System.UInt32;        // 4 Bytes, aka uint, uint32
 
 namespace TestInputMonitoring;
-internal static class LowLevelKeyboardHookHandler
+internal class LowLevelKeyboardHookHandler
 {
     // Win32 API imports
     [DllImport("user32.dll")]
@@ -30,8 +30,8 @@ internal static class LowLevelKeyboardHookHandler
     private static extern short GetKeyState(int keyCode);
 
     private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-    private static LowLevelKeyboardProc _proc;
-    private static IntPtr _hookID = IntPtr.Zero;
+    private LowLevelKeyboardProc _proc;
+    private IntPtr _hookID = IntPtr.Zero;
 
     // Keyboard hook constants
     private const int WH_KEYBOARD_LL = 13;
@@ -45,8 +45,8 @@ internal static class LowLevelKeyboardHookHandler
 
     // -----------------------------------------------------------------------------------------------
 
-    private static bool _keyboardHookActive = false;
-    public static bool KeyboardHookActive
+    private bool _keyboardHookActive = false;
+    public bool KeyboardHookActive
     {
         get => _keyboardHookActive;
         set
@@ -63,12 +63,12 @@ internal static class LowLevelKeyboardHookHandler
             }
         }
     }
-    private static Label? HookActiveLabelReference = null;
+    private Label? HookActiveLabelReference = null;
 
     // -----------------------------------------------------------------------------------------------
 
     // Initialize the keyboard hook. Optionally provide a Windows Forms Label to update with the hook status.
-    public static void InitializeKeyboardHook(Label? labelToUpdate = null)
+    public void InitializeKeyboardHook(Label? labelToUpdate = null)
     {
         // Set up keyboard hook
         _proc = HookCallback;
@@ -83,22 +83,22 @@ internal static class LowLevelKeyboardHookHandler
         KeyboardHookActive = true;
     }
 
-    private static IntPtr SetHook(LowLevelKeyboardProc proc)
+    private IntPtr SetHook(LowLevelKeyboardProc proc)
     {
         using ( var curProcess = System.Diagnostics.Process.GetCurrentProcess() )
         using ( var curModule = curProcess.MainModule )
         {
-            return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
+            return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule!.ModuleName!), 0);
         }
     }
 
     // This gets run every time a key is pressed. It is called by the Windows API as a callback in response to a key press.
-    private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+    private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
         if ( nCode >= 0 )
         {
             // Get the data from the struct as an object
-            KBDLLHOOKSTRUCT kbd = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT));
+            KBDLLHOOKSTRUCT kbd = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(KBDLLHOOKSTRUCT))!;
             int vkCode = (int)kbd.vkCode;
             string vkHex = vkCode.ToString("X");
             int scanCode = (int)kbd.scanCode;
@@ -110,13 +110,13 @@ internal static class LowLevelKeyboardHookHandler
             uint time = kbd.time;
 
             // Print the VK code, scan code, key name, flags, and time with formatting
-            Console.WriteLine($"VK: 0x{vkHex,-4} | Scan: 0x{scanHex,-4} | Key: {keyName,-15} | Time: {time, -10} | Flags: {flags}");
+            Console.WriteLine($"VK: 0x{vkHex,-4} | Scan: 0x{scanHex,-4} | Key: {keyName,-15} | Time: {time,-10} | Flags: {flags}");
         }
         // Need to forward the call back to the Windows API or else it will discard the key press.
         return CallNextHookEx(_hookID, nCode, wParam, lParam);
     }
 
-    public static void StopHook()
+    public void StopHook()
     {
         if ( _hookID != IntPtr.Zero )
         {

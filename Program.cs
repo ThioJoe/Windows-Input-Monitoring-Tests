@@ -44,12 +44,14 @@ namespace TestInputMonitoring
         private Label MonitorActiveLabel;
 
         private IncomingMessageHandler msgHandler;
+        private LowLevelKeyboardHookHandler mainLowLevelKeyboardHookHandler;
 
         public RawInputWindow()
         {
             // Initialize components
             InitializeComponent();
             msgHandler = new IncomingMessageHandler(this, this.MonitorActiveLabel);
+            mainLowLevelKeyboardHookHandler = new LowLevelKeyboardHookHandler();
         }
 
         private void InitializeComponent()
@@ -215,13 +217,13 @@ namespace TestInputMonitoring
         private void StartLLKeyboardHookButton_Click(object sender, EventArgs e)
         {
             // Initialize keyboard hook handling
-            LowLevelKeyboardHookHandler.InitializeKeyboardHook(this.LLKeyboardHookActiveLabel);
+            mainLowLevelKeyboardHookHandler.InitializeKeyboardHook(this.LLKeyboardHookActiveLabel);
         }
 
         private void StopLLKeyboardHookButton_Click(object sender, EventArgs e)
         {
             // Clean up keyboard hook handling
-            LowLevelKeyboardHookHandler.StopHook();
+            mainLowLevelKeyboardHookHandler.StopHook();
         }
 
         private void StartButton_Click(object sender, EventArgs e)
