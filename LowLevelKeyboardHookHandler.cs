@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using DWORD = System.UInt32;        // 4 Bytes, aka uint, uint32
 
 namespace TestInputMonitoring;
-internal class LowLevelKeyboardHookHandler
+internal static class LowLevelKeyboardHookHandler
 {
     // Win32 API imports
     [DllImport("user32.dll")]
@@ -30,8 +30,8 @@ internal class LowLevelKeyboardHookHandler
     private static extern short GetKeyState(int keyCode);
 
     private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-    private LowLevelKeyboardProc _proc;
-    private IntPtr _hookID = IntPtr.Zero;
+    private static LowLevelKeyboardProc _proc;
+    private static IntPtr _hookID = IntPtr.Zero;
 
     // Keyboard hook constants
     private const int WH_KEYBOARD_LL = 13;
@@ -46,20 +46,20 @@ internal class LowLevelKeyboardHookHandler
     // -----------------------------------------------------------------------------------------------
 
     // A custom event that can be used to notify other classes when a key is pressed
-    public event EventHandler<KeyPressedEventArgs>? KeyPressed;
+    public static event EventHandler<KeyPressedEventArgs>? KeyPressed;
     // Custom events for when blocking is enabled and disabled
-    public event EventHandler? BlockingEnabled;
-    public event EventHandler? BlockingDisabled;
+    public static event EventHandler? BlockingEnabled;
+    public static event EventHandler? BlockingDisabled;
 
     // Escape key code
     public const int VK_ESCAPE = 0x1B;
     public const int wScanEscape = 0x0001;
 
     // -----------------------------------------------------------------------------------------------
-    private bool isBlocking = false;
+    private static bool isBlocking = false;
 
-    private bool _keyboardHookActive = false;
-    public bool KeyboardHookActive
+    private static bool _keyboardHookActive = false;
+    public static bool KeyboardHookActive
     {
         get => _keyboardHookActive;
         set
@@ -76,12 +76,12 @@ internal class LowLevelKeyboardHookHandler
             }
         }
     }
-    private Label? HookActiveLabelReference = null;
+    private static Label? HookActiveLabelReference = null;
 
     // -----------------------------------------------------------------------------------------------
 
     // Initialize the keyboard hook. Optionally provide a Windows Forms Label to update with the hook status.
-    public void InitializeKeyboardHook(Label? labelToUpdate = null)
+    public static void InitializeKeyboardHook(Label? labelToUpdate = null)
     {
         // Set up keyboard hook
         _proc = HookCallback;
@@ -96,7 +96,7 @@ internal class LowLevelKeyboardHookHandler
         KeyboardHookActive = true;
     }
 
-    private IntPtr SetHook(LowLevelKeyboardProc proc)
+    private static IntPtr SetHook(LowLevelKeyboardProc proc)
     {
         using ( var curProcess = System.Diagnostics.Process.GetCurrentProcess() )
         using ( var curModule = curProcess.MainModule )
@@ -106,7 +106,7 @@ internal class LowLevelKeyboardHookHandler
     }
 
     // This gets run every time a key is pressed. It is called by the Windows API as a callback in response to a key press.
-    private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+    private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
         if ( nCode >= 0 )
         {
@@ -126,7 +126,7 @@ internal class LowLevelKeyboardHookHandler
             Console.WriteLine($"VK: 0x{vkHex,-4} | Scan: 0x{scanHex,-4} | Key: {keyName,-15} | Time: {time,-10} | Flags: {flags}");
 
             // Raise the custom event to notify other classes that a key was pressed
-            KeyPressed?.Invoke(this, new KeyPressedEventArgs(vkCode, scanCode, flags, time));
+            KeyPressed?.Invoke(null, new KeyPressedEventArgs(vkCode, scanCode, flags, time));
 
             // If it's the escape key, disable blocking but still don't forward the key press
             if ( vkCode == VK_ESCAPE || scanCode == wScanEscape)
@@ -146,22 +146,22 @@ internal class LowLevelKeyboardHookHandler
         }
     }
 
-    public void EnableBlocking()
+    public static void EnableBlocking()
     {
         isBlocking = true;
         // Raise the event to notify other classes that blocking is enabled
-        BlockingEnabled?.Invoke(this, EventArgs.Empty);
+        BlockingEnabled?.Invoke(null, EventArgs.Empty);
     }
 
-    public void DisableBlocking(bool notify = true)
+    public static void DisableBlocking(bool notify = true)
     {
         isBlocking = false;
         // Raise the event to notify other classes that blocking is disabled
         if ( notify )
-            BlockingDisabled?.Invoke(this, EventArgs.Empty);
+            BlockingDisabled?.Invoke(null, EventArgs.Empty);
     }
 
-    public void StopHook()
+    public static void StopHook()
     {
         if ( _hookID != IntPtr.Zero )
         {
