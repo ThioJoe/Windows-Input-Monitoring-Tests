@@ -16,6 +16,13 @@ namespace TestInputMonitoring
         [STAThread]
         static void Main()
         {
+            // Detect if the application is running as 64 or 32 bit
+            if ( !Environment.Is64BitProcess )
+            {
+                Console.WriteLine("WARNING: The app currently only supports being compiled in 64 bit.");
+                Console.ReadKey();
+            }
+
             // Enable visual styles and run the application
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
